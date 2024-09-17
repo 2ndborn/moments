@@ -7,7 +7,7 @@ import appStyles from "../../App.module.css";
 
 import { Form, Button, Image, Col, Row, Container, Alert } from "react-bootstrap";
 import axios from "axios";
-import { SetCurrentUserContext } from "../../App";
+import { SetCurrentUserContext } from "../../contexts/CurrentUserContext";
 
 const SignUpForm = () => {
     const setCurrentUser = useContext(SetCurrentUserContext);
