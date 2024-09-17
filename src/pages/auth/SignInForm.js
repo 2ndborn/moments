@@ -14,6 +14,7 @@ import styles from "../../styles/SignInUpForm.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 import axios from "axios";
+import { SetCurrentUserContext } from "../../App";
 
 function SignInForm() {
 const [signInData, setSignInData] = useState({
@@ -36,7 +37,8 @@ const handleChange = (event) => {
 const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        await axios.post('/dj-rest-auth/login/', signInData);
+        const {data} = await axios.post('/dj-rest-auth/login/', signInData);
+        SetCurrentUserContext(data.user)
         history.push('/');
     } catch(err) {
         setErrors(err.response?.data);
