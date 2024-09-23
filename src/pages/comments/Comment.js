@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from "react";
 import styles from "../../styles/Comment.module.css"
 import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 import Avatar from '../../components/Avatar'
@@ -6,6 +6,7 @@ import { Media } from 'react-bootstrap'
 import { useCurrentUser } from '../../contexts/CurrentUserContext'
 import { MoreDropdown } from '../../components/MoreDropdown'
 import { axiosRes } from '../../api/axiosDefaults'
+import CommentEditForm from "./CommentEditForm";
 
 const Comment = (props) => {
     const {
@@ -14,13 +15,15 @@ const Comment = (props) => {
         owner,
         updated_at,
         content,
+        id,
         setPost,
         setComments,
-        id,
     } = props
 
 const currentUser = useCurrentUser();
 const is_owner = currentUser?.username === owner;
+
+const [showEditForm, setShowEditForm] = useState(false);
 
 const handleDelete = async () => {
     try {
@@ -41,25 +44,38 @@ const handleDelete = async () => {
     }
 }
 
-  return (
-      <div>
-          <hr />
-          <Media>
-              <Link to={`/profiles/${profile_id}`}>
-                  <Avatar src={profile_image} height={55} />
-                  {owner}
-              </Link>
-              <Media.Body className="align-self-center ml-2">
-                  <span className={styles.Owner}>{owner}</span>
-                  <span className={styles.Date}>{updated_at}</span>
-                  <p>{content}</p>
-              </Media.Body>
-              {owner &&  (
-                <MoreDropdown handleEdit={() => {}} handleDelete={handleDelete} />
-              )}
-          </Media>
-      </div>
-  )
+    return (
+        <>
+            <hr />
+            <Media>
+                <Link to={`/profiles/${profile_id}`}>
+                    <Avatar src={profile_image} />
+                </Link>
+                <Media.Body className="align-self-center ml-2">
+                    <span className={styles.Owner}>{owner}</span>
+                    <span className={styles.Date}>{updated_at}</span>
+                    {showEditForm ? (
+                        <CommentEditForm
+                            id={id}
+                            profile_id={profile_id}
+                            content={content}
+                            profileImage={profile_image}
+                            setComments={setComments}
+                            setShowEditForm={setShowEditForm}
+                        />
+                    ) : (
+                        <p>{content}</p>
+                    )}
+                </Media.Body>
+                {is_owner && !showEditForm && (
+                    <MoreDropdown
+                        handleEdit={() => setShowEditForm(true)}
+                        handleDelete={handleDelete}
+                    />
+                )}
+            </Media>
+        </>
+    );
 }
 
 export default Comment
